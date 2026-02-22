@@ -1206,21 +1206,34 @@ footer {
     width: 100vw;
     height: 100vh;
     background-color: #260b21;
+    display: none;
     position: fixed;
     z-index: 10;
+
+    &.modal-open {
+        display: block;
+    }
 }
 #registration-form {
     width: 100vw;
     height: 100vh;
-    background-color: #260b21;
-    display: flex;
+    background-color: transparent;
     justify-content: center;
     align-items: center;
+    display: none;
+    overflow-x: hidden;
+    position: relative;
+    left: 1.5rem;
+
+    &.open {
+        display: flex;
+    }
 
     form {
         max-width: 480px;
         margin: 2rem;
         padding: 1rem;
+        padding-top: 2em;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -1235,6 +1248,7 @@ footer {
             10px 100%,
             0 calc(100% - 10px)
         );
+        position: relative;
 
         label {
             font-family: "Syne", serif;
@@ -1250,8 +1264,60 @@ footer {
             font-weight: bold;
             background-color: white;
             color: #0d0814;
+
+            &:focus {
+                outline: none;
+                border: none;
+            }
+        }
+
+        .form-close {
+            position: absolute;
+            top: 0.5rem;
+            right: 1rem;
+            font-weight: bold;
+            font-size: 1.5rem;
+            cursor: pointer;
         }
     }
+}
+
+/* Session Flash */
+.alert {
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    position: fixed;
+    top: 5rem;
+    left: 0;
+    z-index: 300;
+
+    --alert-colour: #fff;
+
+    &.alert-success {
+        --alert-colour: green;
+    }
+
+    .alert-content {
+        padding: 0.5rem 2rem;
+        padding-right: 0;
+        background-color: var(--alert-colour);
+        color: white;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
+
+        span.alert-close {
+            margin-left: 1rem;
+            margin-right: 0.5rem;
+            font-weight: bold;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+    }
+
 }
 
 @keyframes fadeUp {

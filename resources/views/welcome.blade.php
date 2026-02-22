@@ -22,7 +22,7 @@
             <li><a href="#join">Participate</a></li>
             <li><a href="#register">Register</a></li>
         </ul>
-        <button class="nav-cta register-button" command="show-modal" commandfor="registration-form">Register Now</button>
+        <button class="nav-cta register-button">Register Now</button>
     </nav>
 
     <!-- HERO -->
@@ -42,7 +42,7 @@
             <span class="pill">💡 Workshops</span>
         </div>
         <div class="hero-btns">
-            <button class="btn-p register-button" command="show-modal" commandfor="registration-form">Register Now 🚀</button>
+            <button class="btn-p register-button">Register Now 🚀</button>
             <a class="btn-g" href="#events">View Events</a>
         </div>
     </section>
@@ -284,7 +284,7 @@
             <h2 class="reg-title"><span class="rt1">Let's Go</span><br/><span class="rt2">Seva Srijan!</span></h2>
             <p class="reg-sub">Two days of culture, seva, and pure campus energy. Open to all DU students. Register free, compete hard, celebrate together.</p>
             <div class="reg-btns">
-                <button class="btn-p register-button" command="show-modal" commandfor="registration-form">Register to Compete 🚀</button>
+                <button class="btn-p register-button">Register to Compete 🚀</button>
             </div>
         </div>
     </section>
@@ -305,6 +305,7 @@
     <dialog id="registration-form">
        <form action="/register" method="post">
             @csrf
+            <span class="form-close">X</span>
 
             <label for="name">Name</label>
             <input type="text" name="name" id="name">
@@ -329,10 +330,13 @@
     </dialog>
 
     <!-- SESSION FLASH -->
-     @if (session('status'))
-        <div class="alert alert-success">
-            {{ session('status') }}
+    @if (session('status'))
+    <div class="alert alert-success">
+        <div class="alert-content">
+            <p>{{ session('status') }}</p>
+            <span class="alert-close">X</span>
         </div>
+    </div>
     @endif
 
     <script>
@@ -403,7 +407,7 @@
         }),{threshold:.08});
         document.querySelectorAll('.ev,.es,.stat,.step,.cd-box,.si,.icard').forEach((el,i)=>{
           el.style.opacity='0';el.style.transform='translateY(24px) scale(0.97)';
-          el.style.transition=`opacity .6s cubic-bezier(.23,1,.32,1) ${i*.06}s, transform .6s cubic-bezier(.23,1,.32,1) ${i*.06}s`;
+          el.style.transition=`opacity .6s cubic-bezier(.23,1,.32,1) ${i*.02}s, transform .6s cubic-bezier(.23,1,.32,1) ${i*.02}s`;
           obs.observe(el);
         });
     </script>
