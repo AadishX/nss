@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('attendees', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->string('email')->unique();
+            $table->string('roll_number')->unique();
+            $table->string('phone_number');
+            $table->string('course');
+            $table->integer('year');
             $table->timestamps();
         });
     }
