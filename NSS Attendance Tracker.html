@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NSS Attendance Tracker</title>
+<meta name="theme-color" content="#dc2626">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f1f5f9;--card:#fff;--ink:#1e293b;--mute:#64748b;--line:#e2e8f0;--soft:#f8fafc;--blue:#1d4ed8;--blue-s:#dbeafe;--red:#dc2626;--green:#16a34a;--green-s:#dcfce7;--red-s:#fee2e2;--amber:#b45309;--amber-s:#fef3c7;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f172a;--card:#1e293b;--ink:#e2e8f0;--mute:#94a3b8;--line:#334155;--soft:#0f172a;--blue:#60a5fa;--blue-s:#1e3a8a;--green:#4ade80;--green-s:#14532d;--red-s:#7f1d1d;--amber:#fbbf24;--amber-s:#78350f}}
+:root[data-theme="dark"]{--bg:#0f172a;--card:#1e293b;--ink:#e2e8f0;--mute:#94a3b8;--line:#334155;--soft:#0f172a;--blue:#60a5fa;--blue-s:#1e3a8a;--green:#4ade80;--green-s:#14532d;--red-s:#7f1d1d;--amber:#fbbf24;--amber-s:#78350f}
+html{scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.4 Inter,system-ui,sans-serif;display:flex;justify-content:center}
+.app{width:100%;max-width:480px;min-height:100vh;min-height:100dvh;background:var(--card);display:flex;flex-direction:column;box-shadow:0 0 30px rgba(0,0,0,.08)}
+header{background:linear-gradient(90deg,#1d4ed8,#dc2626);color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+header>div{min-width:0}
+header h1{font-size:15px;margin:0;line-height:1.3}
+header small{display:block;font-size:12px;opacity:.9;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+main{flex:1;padding:14px 14px 96px;min-width:0}
+.tab{display:none}.tab.on{display:block}
+nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--card);border-top:1px solid var(--line);display:flex;padding-bottom:env(safe-area-inset-bottom,0px);z-index:5}
+nav button{flex:1;background:none;border:0;color:var(--mute);padding:8px 0 9px;font:600 11px/1.2 Inter,sans-serif;cursor:pointer}
+nav button span{display:block;font-size:18px;line-height:1.3}
+nav button.on{color:var(--blue)}
+.row{display:flex;gap:8px;align-items:center}
+.row>*{min-width:0}
+.bar{background:var(--blue-s);border-radius:14px;padding:10px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.bar select{flex:1}
+select,input{background:var(--soft);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:9px 10px;font:inherit;font-size:16px;width:100%;text-overflow:ellipsis}
+select:focus,input:focus{outline:2px solid var(--blue);outline-offset:-1px}
+.btn{background:var(--blue);color:#fff;border:0;border-radius:10px;padding:9px 13px;font:600 13px Inter,sans-serif;cursor:pointer;white-space:nowrap;flex:none;min-height:38px}
+.btn.sec{background:var(--soft);color:var(--ink);border:1px solid var(--line)}
+.btn.red{background:var(--red)}
+.pill{font-size:12px;font-weight:600;background:var(--card);color:var(--blue);padding:5px 10px;border-radius:99px;white-space:nowrap;flex:none}
+.card{border:1px solid var(--line);background:var(--soft);border-radius:14px;padding:11px 12px;margin-bottom:8px}
+.card b{overflow-wrap:anywhere}
+.pbtns{display:flex;gap:6px;margin-top:8px}
+.pbtns button{flex:1;border:1px solid var(--line);background:var(--card);color:var(--mute);border-radius:9px;padding:8px 0;font:600 12px Inter,sans-serif;cursor:pointer}
+.pbtns .P.on{background:var(--green-s);color:var(--green);border-color:var(--green)}
+.pbtns .A.on{background:var(--red-s);color:var(--red);border-color:var(--red)}
+.pbtns .L.on{background:var(--amber-s);color:var(--amber);border-color:var(--amber)}
+h2{font-size:17px;margin:0 0 10px}
+.mute{color:var(--mute);font-size:12px;margin:0 0 10px}
+.wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;-webkit-overflow-scrolling:touch}
+table{border-collapse:separate;border-spacing:0;width:100%;font-size:12px}
+th,td{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:8px;text-align:center;white-space:nowrap}
+tr>*:last-child{border-right:0}tr:last-child>*{border-bottom:0}
+th{background:var(--soft);font-weight:700;vertical-align:bottom}
+th.ev{white-space:normal;min-width:76px;max-width:110px;overflow-wrap:anywhere;line-height:1.25}
+th.ev small{display:block;font-weight:500;color:var(--mute)}
+th:first-child,td:first-child{text-align:left;position:sticky;left:0;z-index:1;background:var(--card);box-shadow:1px 0 0 var(--line);max-width:130px;overflow:hidden;text-overflow:ellipsis}
+th:first-child{background:var(--soft);z-index:2}
+td.c{cursor:pointer;font-weight:700;user-select:none;-webkit-user-select:none;min-width:48px}
+td.P{background:var(--green-s);color:var(--green)}td.A{background:var(--red-s);color:var(--red)}td.L{background:var(--amber-s);color:var(--amber)}
+.prog{height:8px;background:var(--line);border-radius:9px;overflow:hidden;margin-top:8px}
+.prog i{display:block;height:100%;background:var(--green)}
+.stats{display:flex;gap:14px;margin-top:8px;font-size:12px;flex-wrap:wrap}
+.modal{position:fixed;inset:0;background:rgba(15,23,42,.55);display:none;align-items:flex-end;justify-content:center;z-index:9}
+.modal.on{display:flex}
+.sheet{background:var(--card);width:100%;max-width:480px;border-radius:22px 22px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom,0px));max-height:90vh;overflow-y:auto}
+label{display:block;font-size:12px;font-weight:600;color:var(--mute);margin:12px 0 5px}
+#toast{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:8px 14px;border-radius:10px;font-size:12px;opacity:0;pointer-events:none;transition:opacity .3s;z-index:20;max-width:90%;text-align:center}
+#toast.on{opacity:1}
+.empty{text-align:center;color:var(--mute);padding:36px 10px}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div><h1>NSS Attendance Tracker</h1><small id="sub"></small></div>
+  <button class="btn red" onclick="openM()">⚙ Events</button>
+</header>
+<main>
+  <section id="t-track" class="tab on">
+    <div class="bar"><select id="evSel" onchange="pickEvent(this.value)"></select><span class="pill" id="stat"></span></div>
+    <div id="trackList"></div>
+  </section>
+  <section id="t-sheet" class="tab">
+    <h2>Attendance Sheet</h2>
+    <p class="mute">All events side by side. Tap a cell to cycle: Present → Absent → Late → blank.</p>
+    <div class="wrap" id="sheet"></div>
+    <div class="row" style="margin-top:10px"><button class="btn sec" onclick="exportCSV()">⬇ Export CSV</button></div>
+  </section>
+  <section id="t-people" class="tab">
+    <div class="row" style="justify-content:space-between;margin-bottom:10px"><h2 style="margin:0">Attendees</h2><span class="pill" id="pCount"></span></div>
+    <div class="row" style="margin-bottom:12px"><input id="pName" placeholder="Full name…" onkeydown="if(event.key==='Enter')addPerson()"><button class="btn" onclick="addPerson()">+ Add</button></div>
+    <div id="pList"></div>
+  </section>
+  <section id="t-reports" class="tab"><h2>Summary by event</h2><div id="reports"></div></section>
+</main>
+<nav>
+  <button id="n-track" class="on" onclick="tab('track')"><span>✅</span>Track</button>
+  <button id="n-sheet" onclick="tab('sheet')"><span>▦</span>Sheet</button>
+  <button id="n-people" onclick="tab('people')"><span>👥</span>People</button>
+  <button id="n-reports" onclick="tab('reports')"><span>📊</span>Reports</button>
+</nav>
+
+<div class="modal" id="modal" onclick="if(event.target===this)closeM()">
+  <div class="sheet">
+    <div class="row" style="justify-content:space-between"><h2 style="margin:0">Manage events</h2><button class="btn sec" onclick="closeM()">✕</button></div>
+    <label>Event</label>
+    <div class="row"><select id="mEv" onchange="mLoad(this.value)"></select><button class="btn sec" onclick="newEvent()">+ New</button></div>
+    <label>Event name</label>
+    <input id="mName" placeholder="e.g. Cleanliness Drive">
+    <label>Date (optional)</label>
+    <input id="mDate" type="date">
+    <div class="row" style="margin-top:16px"><button class="btn" style="flex:1" onclick="mSave()">Save</button><button class="btn red" id="delBtn" onclick="delEvent()">Delete</button></div>
+  </div>
+</div>
+<div id="toast"></div>
+</div>
+
+<script>
+const KEY='nss_attendance_v3', DOC='app/state';
+const seed=()=>({people:[{id:1,name:'Aarav Sharma'},{id:2,name:'Priya Patel'},{id:3,name:'Rahul Verma'}],
+  events:[{id:1,name:'NSS Special Camp',date:'',att:{}}]});
+let S=seed(), curEv=null, db=null, mId=null, ready=false;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ev=()=>S.events.find(e=>e.id===curEv)||S.events[0];
+const NEXT={'':'P',P:'A',A:'L',L:''}, LBL={P:'P',A:'A',L:'L','':'–'};
+const fmt=d=>{if(!d)return'';const p=d.split('-');return p.length===3?p[2]+'/'+p[1]+'/'+p[0].slice(2):d};
+
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('on'),2200)}
+
+// Older data had multi-day events: split every day into its own single-day event.
+function migrate(){
+  const out=[];
+  (S.events||[]).forEach((e,i)=>{
+    if(!Array.isArray(e.days)){out.push(e);return}
+    const days=e.days.length?e.days:[''];
+    days.forEach((d,j)=>{
+      const att={};
+      (S.people||[]).forEach(p=>{const s=(e.att||{})[d+'_'+p.id];if(s)att[p.id]=s});
+      out.push({id:e.id+j*7+(j?i+1:0),name:days.length>1?e.name+' – '+d:e.name,date:e.date||'',att});
+    });
+  });
+  S.events=out;
+}
+function norm(){
+  if(!S.people)S.people=[];
+  if(!S.events||!S.events.length)S.events=seed().events;
+  if(S.events.some(e=>Array.isArray(e.days)))migrate();
+  if(!S.events.some(e=>e.id===curEv))curEv=S.events[0].id;
+}
+
+// ---- persistence: shared database (db capability) with localStorage fallback ----
+try{const l=localStorage.getItem(KEY);if(l)S=JSON.parse(l)}catch(e){}
+function save(){
+  const json=JSON.stringify(S);
+  try{localStorage.setItem(KEY,json)}catch(e){}
+  if(db)db.doc(DOC).set({json,updated:Date.now()}).catch(()=>toast('Could not save to database'));
+}
+(async()=>{
+  try{
+    if(!window.claude)return;
+    db=await claude.use('db');
+    if(!db)return;
+    const t=setTimeout(()=>toast('Database is slow to respond'),10000);
+    db.doc(DOC).onSnapshot(snap=>{
+      clearTimeout(t);
+      if(snap.exists){try{S=JSON.parse(snap.data().json);norm();renderAll();if(S.events.some(e=>Array.isArray(e.days)))save()}catch(e){}}
+      else if(!ready){norm();save()}
+      ready=true;
+    },()=>{clearTimeout(t);toast('Database unavailable, using local data')});
+  }catch(e){db=null}
+})();
+
+// ---- navigation ----
+function tab(n){
+  document.querySelectorAll('.tab,nav button').forEach(e=>e.classList.remove('on'));
+  $('t-'+n).classList.add('on');$('n-'+n).classList.add('on');renderAll();
+}
+function pickEvent(id){curEv=+id;renderAll()}
+
+// ---- rendering ----
+function renderAll(){norm();renderHeader();renderTrack();renderSheet();renderPeople();renderReports()}
+function evLabel(e){return e.name+(e.date?' ('+fmt(e.date)+')':'')}
+function renderHeader(){
+  $('sub').textContent=evLabel(ev());
+  $('evSel').innerHTML=S.events.map(e=>`<option value="${e.id}" ${e.id===curEv?'selected':''}>${esc(evLabel(e))}</option>`).join('');
+}
+function renderTrack(){
+  const e=ev(),box=$('trackList');
+  if(!S.people.length){box.innerHTML='<div class="empty">Add people in the People tab to start.</div>';$('stat').textContent='0 / 0';return}
+  let p=0;
+  box.innerHTML=S.people.map(x=>{
+    const s=e.att[x.id]||'';if(s==='P'||s==='L')p++;
+    return `<div class="card"><b>${esc(x.name)}</b><div class="pbtns">${['P','A','L'].map(k=>`<button class="${k}${s===k?' on':''}" onclick="mark(${x.id},'${k}')">${{P:'Present',A:'Absent',L:'Late'}[k]}</button>`).join('')}</div></div>`;
+  }).join('');
+  $('stat').textContent=p+' / '+S.people.length+' in';
+}
+function mark(pid,st){
+  const e=ev();
+  if(e.att[pid]===st)delete e.att[pid];else e.att[pid]=st;
+  save();renderTrack();renderSheet();renderReports();
+}
+function cyc(eid,pid){
+  const e=S.events.find(x=>x.id===eid),n=NEXT[e.att[pid]||''];
+  if(n)e.att[pid]=n;else delete e.att[pid];
+  save();renderTrack();renderSheet();renderReports();
+}
+function renderSheet(){
+  const box=$('sheet');
+  if(!S.people.length){box.innerHTML='<div class="empty">No people yet.</div>';return}
+  box.innerHTML='<table><tr><th>Name</th>'+S.events.map(e=>`<th class="ev">${esc(e.name)}${e.date?`<small>${esc(fmt(e.date))}</small>`:''}</th>`).join('')+'<th>P</th><th>A</th><th>L</th></tr>'+
+    S.people.map(x=>{
+      let p=0,a=0,l=0;
+      const cells=S.events.map(e=>{const s=e.att[x.id]||'';if(s==='P')p++;else if(s==='A')a++;else if(s==='L')l++;
+        return `<td class="c ${s}" onclick="cyc(${e.id},${x.id})">${LBL[s]}</td>`}).join('');
+      return `<tr><td>${esc(x.name)}</td>${cells}<td>${p}</td><td>${a}</td><td>${l}</td></tr>`}).join('')+'</table>';
+}
+function renderPeople(){
+  $('pCount').textContent=S.people.length+' people';
+  $('pList').innerHTML=S.people.length?S.people.map(x=>`<div class="card row" style="justify-content:space-between"><b style="font-weight:500;min-width:0">${esc(x.name)}</b><button class="btn sec" onclick="delPerson(${x.id})" aria-label="Remove">🗑</button></div>`).join(''):'<div class="empty">No volunteers added yet.</div>';
+}
+function renderReports(){
+  $('reports').innerHTML=S.events.map(e=>{
+    let p=0,a=0,l=0;S.people.forEach(x=>{const s=e.att[x.id];if(s==='P')p++;else if(s==='A')a++;else if(s==='L')l++});
+    const tot=S.people.length,pct=tot?Math.round((p+l)/tot*100):0;
+    return `<div class="card"><b>${esc(e.name)}</b><div class="mute" style="margin:2px 0 0">${e.date?esc(fmt(e.date))+' · ':''}${tot} people</div>
+    <div class="stats"><span style="color:var(--green)">Present ${p}</span><span style="color:var(--amber)">Late ${l}</span><span style="color:var(--red)">Absent ${a}</span><b style="margin-left:auto">${pct}%</b></div>
+    <div class="prog"><i style="width:${pct}%"></i></div></div>`}).join('');
+}
+
+// ---- people ----
+function addPerson(){
+  const i=$('pName'),n=i.value.trim();if(!n)return;
+  S.people.push({id:Date.now(),name:n});i.value='';save();renderAll();toast('Added '+n);
+}
+function delPerson(id){
+  S.people=S.people.filter(x=>x.id!==id);
+  S.events.forEach(e=>delete e.att[id]);
+  save();renderAll();toast('Person removed');
+}
+
+// ---- event manager ----
+function openM(){mId=curEv;mFill();$('modal').classList.add('on')}
+function closeM(){resetDel();$('modal').classList.remove('on')}
+function mFill(){
+  $('mEv').innerHTML=S.events.map(e=>`<option value="${e.id}" ${e.id===mId?'selected':''}>${esc(e.name)}</option>`).join('');
+  const e=S.events.find(x=>x.id===mId);$('mName').value=e.name;$('mDate').value=e.date||'';
+}
+function mLoad(id){resetDel();mId=+id;mFill()}
+function mSave(){
+  const e=S.events.find(x=>x.id===mId);
+  e.name=$('mName').value.trim()||e.name;e.date=$('mDate').value;curEv=mId;
+  save();closeM();renderAll();toast('Event saved');
+}
+function newEvent(){
+  const e={id:Date.now(),name:'New event '+(S.events.length+1),date:'',att:{}};
+  S.events.push(e);mId=e.id;save();mFill();renderAll();toast('Event created, name it below');
+}
+// Deleting needs 3 taps in a row (resets after 4 s of no tap)
+let delStep=0,delTimer=null;
+function resetDel(){delStep=0;clearTimeout(delTimer);const b=$('delBtn');if(b)b.textContent='Delete'}
+function delEvent(){
+  if(S.events.length<2){toast('Keep at least one event');return}
+  delStep++;
+  clearTimeout(delTimer);
+  if(delStep<3){
+    $('delBtn').textContent='Confirm '+delStep+' of 3';
+    toast('Tap '+(3-delStep)+' more time'+(delStep===1?'s':'')+' to delete this event and its attendance');
+    delTimer=setTimeout(resetDel,4000);
+    return;
+  }
+  resetDel();
+  S.events=S.events.filter(x=>x.id!==mId);curEv=S.events[0].id;mId=curEv;
+  save();mFill();renderAll();toast('Event deleted');
+}
+
+// ---- CSV export ----
+async function exportCSV(){
+  const q=v=>'"'+String(v).replace(/"/g,'""')+'"',W={P:'Present',A:'Absent',L:'Late'};
+  const rows=[['Event','Date','Name','Status'].map(q).join(',')];
+  S.events.forEach(e=>S.people.forEach(p=>rows.push([e.name,e.date||'',p.name,W[e.att[p.id]]||''].map(q).join(','))));
+  const data=rows.join('\n');
+  try{
+    const dl=window.claude&&await claude.use('downloads');
+    if(dl){await dl.save({filename:'nss_attendance.csv',data});return}
+  }catch(e){if(e&&e.code==='declined')return}
+  try{await navigator.clipboard.writeText(data);toast('CSV copied to clipboard')}catch(e){toast('Export unavailable here')}
+}
+
+norm();renderAll();
+</script>
+</body>
+</html>
